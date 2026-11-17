@@ -8,7 +8,7 @@ const DEFAULT_MESSAGE = 'Terjadi kesalahan. Silakan coba lagi.';
 
 /**
  * Mengubah error teknis menjadi pesan Bahasa Indonesia yang aman ditampilkan.
- * Detail teknis hanya dicatat ke console, tidak ditampilkan ke pengguna.
+ * SEMENTARA: pesan asli ditampilkan untuk debugging. Kembalikan ke versi aman setelah masalah selesai.
  */
 export function toUserMessage(error) {
   if (!error) return DEFAULT_MESSAGE;
@@ -25,5 +25,6 @@ export function toUserMessage(error) {
     return 'Koneksi bermasalah. Periksa jaringan Anda.';
   }
 
-  return DEFAULT_MESSAGE;
-  }
+  const detail = typeof error.message === 'string' ? error.message : '';
+  return `${DEFAULT_MESSAGE} (${detail})`;
+}
