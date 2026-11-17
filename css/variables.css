@@ -1,20 +1,20 @@
 :root {
-  /* Palet */
-  --color-ice: #e8f4fb;
-  --color-soft-blue: #9fd0ec;
+  /* Palet biru muda */
+  --color-ice: #e6f4fc;
+  --color-soft-blue: #a9d8f2;
   --color-medium-blue: #3b8ccf;
   --color-white: #ffffff;
-  --color-silver: #c9d3dc;
+  --color-silver: #c9d6e1;
   --color-slate: #1f2d3d;
 
-  /* Permukaan kaca */
-  --glass-bg: rgba(255, 255, 255, 0.6);
-  --glass-border: rgba(255, 255, 255, 0.9);
-  --glass-shadow: 0 8px 32px rgba(31, 45, 61, 0.08);
-  --glass-blur: blur(18px);
+  /* Permukaan liquid glass */
+  --glass-bg: rgba(255, 255, 255, 0.42);
+  --glass-border: rgba(255, 255, 255, 0.85);
+  --glass-shadow: 0 10px 40px rgba(59, 140, 207, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  --glass-blur: blur(20px) saturate(160%);
 
-  /* Background */
-  --bg-gradient: linear-gradient(160deg, #f4f9fd 0%, #e3eff8 55%, #eef2f6 100%);
+  /* Background biru muda lembut */
+  --bg-gradient: linear-gradient(135deg, #dcefFB 0%, #f2f9fe 40%, #bfe2f7 75%, #e4f2fb 100%);
 
   /* Teks */
   --text-primary: var(--color-slate);
@@ -32,9 +32,9 @@
   --space-4: 16px;
   --space-6: 24px;
   --space-8: 32px;
-  --radius-sm: 8px;
+  --radius-sm: 10px;
   --radius-md: 14px;
-  --radius-lg: 20px;
+  --radius-lg: 22px;
 
   /* Gerak */
   --transition-base: 200ms ease;
