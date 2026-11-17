@@ -1,0 +1,5 @@
+@media (max-width: 480px) {
+  .login-card {
+    padding: var(--space-6);
+  }
+}
