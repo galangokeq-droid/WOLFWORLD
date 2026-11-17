@@ -1,23 +1,26 @@
-<h1 align="center">WOLFWORLD</h1>
+```
+██╗    ██╗ ██████╗ ██╗     ███████╗██╗    ██╗ ██████╗ ██████╗ ██╗     ██████╗
+██║    ██║██╔═══██╗██║     ██╔════╝██║    ██║██╔═══██╗██╔══██╗██║     ██╔══██╗
+██║ █╗ ██║██║   ██║██║     █████╗  ██║ █╗ ██║██║   ██║██████╔╝██║     ██║  ██║
+██║███╗██║██║   ██║██║     ██╔══╝  ██║███╗██║██║   ██║██╔══██╗██║     ██║  ██║
+╚███╔███╔╝╚██████╔╝███████╗██║     ╚███╔███╔╝╚██████╔╝██║  ██║███████╗██████╔╝
+ ╚══╝╚══╝  ╚═════╝ ╚══════╝╚═╝      ╚══╝╚══╝  ╚═════╝ ╚═╝  ╚═╝╚══════╝╚═════╝
+
+  > Owner & Admin Control Center
+  > pesanan · pembayaran · pelanggan · produk · laporan — satu panel
+```
 
 <p align="center">
-  <b>Owner &amp; Admin Control Center</b><br/>
-  Pusat kendali bisnis WOLFWORLD: pesanan, pembayaran, pelanggan, produk, dan laporan keuangan dalam satu panel.
-</p>
-
-<p align="center">
-  <img src="https://img.shields.io/badge/status-in%20development-orange" />
-  <img src="https://img.shields.io/badge/frontend-HTML%20%7C%20CSS%20%7C%20JS-blue" />
-  <img src="https://img.shields.io/badge/backend-Supabase-3ECF8E" />
-  <img src="https://img.shields.io/badge/deploy-Vercel-black" />
-  <img src="https://img.shields.io/badge/access-private-lightgrey" />
+  <img src="https://img.shields.io/badge/status-in%20development-orange?style=flat-square" />
+  <img src="https://img.shields.io/badge/frontend-HTML%20%7C%20CSS%20%7C%20JS-blue?style=flat-square&logo=javascript&logoColor=white" />
+  <img src="https://img.shields.io/badge/backend-Supabase-3ECF8E?style=flat-square&logo=supabase&logoColor=white" />
+  <img src="https://img.shields.io/badge/deploy-Vercel-black?style=flat-square&logo=vercel&logoColor=white" />
+  <img src="https://img.shields.io/badge/access-private-lightgrey?style=flat-square" />
 </p>
 
 ---
 
-## Tentang
-
-WOLFWORLD Control Center adalah panel internal untuk Owner dan Admin. Hak akses ditentukan di database lewat Row Level Security (RLS), jadi browser tidak pernah dipercaya untuk menentukan role sendiri.
+**WOLFWORLD Control Center** adalah panel internal untuk Owner dan Admin. Semua hak akses ditentukan di database lewat Row Level Security (RLS), jadi browser tidak pernah dipercaya untuk menentukan role sendiri.
 
 ## Visi
 
@@ -44,11 +47,39 @@ Menjadi platform bisnis digital yang rapi, transparan, dan mudah dikelola, sehin
 | Admin dan permission | Belum dimulai |
 | Support, log aktivitas, konten website, portofolio, promo | Belum dimulai |
 
+## Keamanan
+
+- Hanya **publishable key** Supabase yang ada di frontend. Service role key tidak pernah dipakai di browser.
+- Semua tabel publik memakai **RLS**.
+- Aksi yang menulis log aktivitas dijalankan lewat **fungsi database**, bukan langsung dari browser.
+- Role dibaca dari database, bukan dari data yang dikirim browser.
+
 ## Teknologi
 
-- **Frontend:** HTML, CSS, dan JavaScript (ES Modules) tanpa build step
+- **Frontend:** HTML, CSS, JavaScript (ES Modules), tanpa build step
 - **Backend:** Supabase (Auth, PostgreSQL, RLS, RPC)
 - **Deploy:** Vercel (static hosting)
 - **Desain:** tema light blue dengan efek liquid glass, responsif untuk desktop, tablet, dan HP
 
 ## Struktur
+
+```
+index.html      Seluruh aplikasi (login, dashboard, modul)
+css/            Styling (variables, reset, components, layout, navigation, modules, responsive)
+```
+
+## Menjalankan
+
+Tidak perlu instalasi. Buka lewat deploy Vercel, lalu login dengan akun Owner.
+
+## Roadmap
+
+1. Login, dashboard, dan pesanan berjalan stabil
+2. Pelanggan, proyek, dan produk
+3. Laporan keuangan
+4. Admin dan manajemen permission
+5. Konten website, portofolio, dan promo
+
+---
+
+<p align="center"><sub>WOLFWORLD · Private project</sub></p>
