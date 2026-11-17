@@ -1,179 +1,234 @@
-<!doctype html>
-<html lang="id">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>WOLFWORLD Control Center</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="css/variables.css" />
-    <link rel="stylesheet" href="css/reset.css" />
-    <link rel="stylesheet" href="css/components.css" />
-    <link rel="stylesheet" href="css/pages.css" />
-    <link rel="stylesheet" href="css/layout.css" />
-    <link rel="stylesheet" href="css/navigation.css" />
-    <link rel="stylesheet" href="css/responsive.css" />
-  </head>
-  <body>
-    <main id="login-view" class="login-page">
-      <section class="glass login-card" aria-labelledby="login-title">
-        <div class="login-avatar" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="8" r="4" />
-            <path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5" />
-          </svg>
-        </div>
+import { signInWithPassword, signOut, getCurrentSession } from './auth/authentication.js';
+import { fetchCurrentProfile } from './services/profile.service.js';
+import { resolveAccess, APP_ROLES } from './auth/authorization.js';
+import { isValidEmail, isNonEmpty } from './utils/validators.js';
+import { toUserMessage } from './utils/error-handler.js';
+import { loadDashboard } from './pages/dashboard.js';
+import { renderOrdersList } from './pages/orders.js';
+import { renderPaymentsList } from './pages/payments.js';
 
-        <header class="login-brand">
-          <h1 id="login-title">Login</h1>
-          <p>Selamat datang kembali! Silakan masuk untuk melanjutkan.</p>
-        </header>
+const loginView = document.getElementById('login-view');
+const dashboardView = document.getElementById('dashboard-view');
+const dashboardContent = document.getElementById('dashboard-content');
+const moduleContent = document.getElementById('module-content');
+const pageTitle = document.getElementById('page-title');
+const menuButton = document.getElementById('menu-button');
+const drawer = document.getElementById('drawer');
+const drawerOverlay = document.getElementById('drawer-overlay');
+const navButtons = document.querySelectorAll('[data-page]');
 
-        <div id="login-error" class="alert alert-error" role="alert" hidden></div>
+const form = document.getElementById('login-form');
+const emailInput = document.getElementById('email');
+const passwordInput = document.getElementById('password');
+const emailError = document.getElementById('email-error');
+const passwordError = document.getElementById('password-error');
+const submitButton = document.getElementById('submit-button');
+const errorBox = document.getElementById('login-error');
+const passwordToggle = document.getElementById('password-toggle');
+const forgotButton = document.getElementById('forgot-password');
+const userName = document.getElementById('user-name');
+const logoutButton = document.getElementById('logout-button');
 
-        <form id="login-form" class="login-form" novalidate>
-          <div class="field">
-            <label class="field-label" for="email">Email</label>
-            <div class="input-wrap">
-              <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
-                <rect x="3" y="5" width="18" height="14" rx="2" />
-                <path d="M3 7l9 6 9-6" />
-              </svg>
-              <input class="field-input" id="email" name="email" type="email" autocomplete="username" placeholder="nama@email.com" required />
-            </div>
-            <span class="field-error" id="email-error" hidden></span>
-          </div>
+const ACCESS_MESSAGES = {
+  PROFILE_MISSING: 'Profil akun belum terdaftar. Hubungi Owner.',
+  ACCOUNT_INACTIVE: 'Akun Anda nonaktif. Hubungi Owner.',
+  UNKNOWN_ROLE: 'Role akun tidak dikenali. Hubungi Owner.',
+};
 
-          <div class="field">
-            <label class="field-label" for="password">Password</label>
-            <div class="input-wrap">
-              <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
-                <rect x="5" y="11" width="14" height="10" rx="2" />
-                <path d="M8 11V8a4 4 0 0 1 8 0v3" />
-              </svg>
-              <input class="field-input" id="password" name="password" type="password" autocomplete="current-password" placeholder="Masukkan password" required />
-              <button type="button" class="password-toggle" id="password-toggle" aria-controls="password" aria-pressed="false">Tampilkan</button>
-            </div>
-            <span class="field-error" id="password-error" hidden></span>
-          </div>
+const PAGE_TITLES = {
+  dashboard: 'Dashboard',
+  orders: 'Pesanan',
+  payments: 'Pembayaran',
+};
 
-          <div class="login-options">
-            <label>
-              <input type="checkbox" id="remember" name="remember" checked />
-              Ingat sesi saya
-            </label>
-            <button type="button" class="link-button" id="forgot-password">Lupa password?</button>
-          </div>
+function showMessage(message, type) {
+  errorBox.textContent = message;
+  errorBox.classList.toggle('alert-error', type === 'error');
+  errorBox.classList.toggle('alert-success', type === 'success');
+  errorBox.hidden = false;
+}
 
-          <button type="submit" class="btn btn-login" id="submit-button">Login</button>
-        </form>
-      </section>
-    </main>
+function showError(message) {
+  showMessage(message, 'error');
+}
 
-    <div id="dashboard-view" class="app-shell" hidden>
-      <header class="topbar glass">
-        <button type="button" class="menu-button" id="menu-button" aria-label="Buka menu" aria-controls="drawer" aria-expanded="false">
-          <span></span>
-          <span></span>
-          <span></span>
-        </button>
+function clearError() {
+  errorBox.hidden = true;
+  errorBox.textContent = '';
+}
 
-        <div class="topbar-title">
-          <strong>WOLFWORLD</strong>
-          <h2>Dashboard</h2>
-        </div>
+function setFieldError(element, message) {
+  element.textContent = message ?? '';
+  element.hidden = !message;
+}
 
-        <button type="button" class="bell-button" id="notification-button" aria-label="Aktifkan notifikasi" title="Aktifkan notifikasi">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M6 8a6 6 0 0 1 12 0c0 7 3 8 3 8H3s3-1 3-8" />
-            <path d="M10.3 21a1.9 1.9 0 0 0 3.4 0" />
-          </svg>
-        </button>
-      </header>
+function validateForm() {
+  const email = emailInput.value;
+  const password = passwordInput.value;
 
-      <section class="content">
-        <p id="notification-status" class="notification-status" hidden></p>
-        <div id="dashboard-error" class="alert alert-error" role="alert" hidden></div>
+  const emailMessage = !isNonEmpty(email)
+    ? 'Email wajib diisi.'
+    : !isValidEmail(email)
+      ? 'Format email tidak valid.'
+      : null;
+  const passwordMessage = isNonEmpty(password) ? null : 'Password wajib diisi.';
 
-        <div id="stats-grid" class="stats-grid"></div>
+  setFieldError(emailError, emailMessage);
+  setFieldError(passwordError, passwordMessage);
+  return !emailMessage && !passwordMessage;
+}
 
-        <div class="panels-grid">
-          <section class="glass panel">
-            <h3>Pesanan Terbaru</h3>
-            <ul id="recent-orders" class="list"></ul>
-          </section>
-          <section class="glass panel">
-            <h3>Pembayaran Terbaru</h3>
-            <ul id="recent-payments" class="list"></ul>
-          </section>
-          <section class="glass panel">
-            <h3>Aktivitas Terbaru</h3>
-            <ul id="recent-activities" class="list"></ul>
-          </section>
-        </div>
-      </section>
+function setLoading(isLoading) {
+  submitButton.disabled = isLoading;
+  submitButton.textContent = isLoading ? 'Memeriksa...' : 'Login';
+}
 
-      <div id="drawer-overlay" class="drawer-overlay" hidden></div>
+function openDrawer() {
+  drawer.classList.add('is-open');
+  drawer.setAttribute('aria-hidden', 'false');
+  drawerOverlay.hidden = false;
+  menuButton.setAttribute('aria-expanded', 'true');
+}
 
-      <aside id="drawer" class="drawer glass" aria-label="Menu lengkap" aria-hidden="true">
-        <div class="sidebar-brand">
-          <strong>WOLFWORLD</strong>
-          <span>Owner Panel</span>
-        </div>
+function closeDrawer() {
+  drawer.classList.remove('is-open');
+  drawer.setAttribute('aria-hidden', 'true');
+  drawerOverlay.hidden = true;
+  menuButton.setAttribute('aria-expanded', 'false');
+}
 
-        <nav class="drawer-nav" aria-label="Menu lengkap">
-          <p class="nav-group">Overview</p>
-          <button type="button" class="nav-item is-active" aria-current="page">Dashboard</button>
+/** Pindah halaman di dalam dashboard. Hanya satu modul yang tampil dalam satu waktu. */
+function navigate(page) {
+  const isDashboard = page === 'dashboard';
+  dashboardContent.hidden = !isDashboard;
+  moduleContent.hidden = isDashboard;
+  pageTitle.textContent = PAGE_TITLES[page] ?? PAGE_TITLES.dashboard;
 
-          <p class="nav-group">Bisnis</p>
-          <button type="button" class="nav-item" disabled>Customer Management <span class="nav-soon">Segera</span></button>
-          <button type="button" class="nav-item" disabled>Orders Management <span class="nav-soon">Segera</span></button>
-          <button type="button" class="nav-item" disabled>Products Management <span class="nav-soon">Segera</span></button>
-          <button type="button" class="nav-item" disabled>Services Management <span class="nav-soon">Segera</span></button>
-          <button type="button" class="nav-item" disabled>Projects Management <span class="nav-soon">Segera</span></button>
-          <button type="button" class="nav-item" disabled>Payments Management <span class="nav-soon">Segera</span></button>
+  for (const button of navButtons) {
+    const active = button.dataset.page === page;
+    button.classList.toggle('is-active', active);
+    if (active) {
+      button.setAttribute('aria-current', 'page');
+    } else {
+      button.removeAttribute('aria-current');
+    }
+  }
 
-          <p class="nav-group">Keuangan</p>
-          <button type="button" class="nav-item" disabled>Financial Reports <span class="nav-soon">Segera</span></button>
+  closeDrawer();
+  window.scrollTo(0, 0);
 
-          <p class="nav-group">Sistem</p>
-          <button type="button" class="nav-item" disabled>Admin Management <span class="nav-soon">Segera</span></button>
-          <button type="button" class="nav-item" disabled>Activity Logs <span class="nav-soon">Segera</span></button>
-          <button type="button" class="nav-item" disabled>System Settings <span class="nav-soon">Segera</span></button>
-        </nav>
+  if (isDashboard) {
+    loadDashboard();
+  } else if (page === 'orders') {
+    renderOrdersList(moduleContent);
+  } else if (page === 'payments') {
+    renderPaymentsList(moduleContent);
+  }
+}
 
-        <div class="sidebar-footer">
-          <p id="user-name" class="user-name"></p>
-          <button type="button" class="btn btn-secondary" id="logout-button">Keluar</button>
-        </div>
-      </aside>
+function showLogin() {
+  closeDrawer();
+  dashboardView.hidden = true;
+  loginView.hidden = false;
+}
 
-      <nav class="bottom-nav glass" aria-label="Navigasi utama">
-        <button type="button" class="bottom-nav-item is-active" aria-current="page">
-          <span class="bottom-nav-icon" aria-hidden="true">🏠</span>
-          <span>Dashboard</span>
-        </button>
-        <button type="button" class="bottom-nav-item" disabled>
-          <span class="bottom-nav-icon" aria-hidden="true">📊</span>
-          <span>Laporan</span>
-        </button>
-        <button type="button" class="bottom-nav-item bottom-nav-featured" disabled>
-          <span class="bottom-nav-featured-circle" aria-hidden="true">💳</span>
-          <span>Pembayaran</span>
-        </button>
-        <button type="button" class="bottom-nav-item" disabled>
-          <span class="bottom-nav-icon" aria-hidden="true">🕘</span>
-          <span>Aktivitas</span>
-        </button>
-        <button type="button" class="bottom-nav-item" disabled>
-          <span class="bottom-nav-icon" aria-hidden="true">👤</span>
-          <span>Profil</span>
-        </button>
-      </nav>
-    </div>
+function showDashboard(profile) {
+  loginView.hidden = true;
+  dashboardView.hidden = false;
+  userName.textContent = profile.fullName ?? 'Owner';
+  navigate('dashboard');
+}
 
-    <script type="module" src="js/app.js"></script>
-    <script type="module" src="js/notifications.js"></script>
-  </body>
-</html>
+/**
+ * Setelah login: ambil profil, cek status akun dan role.
+ * Hanya Owner yang masuk ke dashboard saat ini. Panel Admin dibuat di tahap berikutnya.
+ */
+async function completeSignIn() {
+  const profile = await fetchCurrentProfile();
+  const access = resolveAccess(profile);
+
+  if (!access.allowed) {
+    await signOut();
+    showLogin();
+    showError(ACCESS_MESSAGES[access.reason]);
+    return;
+  }
+
+  if (access.role !== APP_ROLES.OWNER) {
+    await signOut();
+    showLogin();
+    showError('Panel Admin belum tersedia pada tahap ini.');
+    return;
+  }
+
+  clearError();
+  showDashboard(profile);
+}
+
+form.addEventListener('submit', async (event) => {
+  event.preventDefault();
+  clearError();
+
+  if (!validateForm()) return;
+
+  setLoading(true);
+  try {
+    await signInWithPassword(emailInput.value.trim(), passwordInput.value);
+    await completeSignIn();
+  } catch (error) {
+    showError(toUserMessage(error));
+  } finally {
+    setLoading(false);
+  }
+});
+
+logoutButton.addEventListener('click', async () => {
+  try {
+    await signOut();
+    passwordInput.value = '';
+    clearError();
+    showLogin();
+  } catch (error) {
+    showError(toUserMessage(error));
+  }
+});
+
+menuButton.addEventListener('click', () => {
+  if (drawer.classList.contains('is-open')) {
+    closeDrawer();
+  } else {
+    openDrawer();
+  }
+});
+
+drawerOverlay.addEventListener('click', closeDrawer);
+
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape') closeDrawer();
+});
+
+for (const button of navButtons) {
+  button.addEventListener('click', () => navigate(button.dataset.page));
+}
+
+passwordToggle.addEventListener('click', () => {
+  const isHidden = passwordInput.type === 'password';
+  passwordInput.type = isHidden ? 'text' : 'password';
+  passwordToggle.textContent = isHidden ? 'Sembunyikan' : 'Tampilkan';
+  passwordToggle.setAttribute('aria-pressed', String(isHidden));
+});
+
+forgotButton.addEventListener('click', () => {
+  showError('Fitur reset password belum tersedia. Hubungi Owner.');
+});
+
+async function restoreSession() {
+  try {
+    const session = await getCurrentSession();
+    if (session) await completeSignIn();
+  } catch (error) {
+    showError(toUserMessage(error));
+  }
+}
+
+restoreSession();
