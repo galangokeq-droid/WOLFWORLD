@@ -1,0 +1,66 @@
+:root {
+  /* Palet */
+  --color-ice: #e8f4fb;
+  --color-soft-blue: #9fd0ec;
+  --color-medium-blue: #3b8ccf;
+  --color-white: #ffffff;
+  --color-silver: #c9d3dc;
+  --color-slate: #1f2d3d;
+
+  /* Permukaan kaca */
+  --glass-bg: rgba(255, 255, 255, 0.55);
+  --glass-border: rgba(255, 255, 255, 0.85);
+  --glass-shadow: 0 8px 32px rgba(31, 45, 61, 0.08);
+  --glass-blur: blur(18px);
+
+  /* Background */
+  --bg-gradient: linear-gradient(160deg, #f4f9fd 0%, #e3eff8 55%, #eef2f6 100%);
+
+  /* Teks */
+  --text-primary: var(--color-slate);
+  --text-muted: #5b6b7c;
+
+  /* Status */
+  --status-success: #2e8b57;
+  --status-warning: #b7791f;
+  --status-danger: #c53030;
+
+  /* Spacing dan bentuk */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+
+  /* Gerak */
+  --transition-base: 200ms ease;
+
+  /* Layout */
+  --sidebar-width: 248px;
+  --topbar-height: 64px;
+  --bottom-nav-height: 64px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --bg-gradient: linear-gradient(160deg, #1a2634 0%, #1f3144 100%);
+    --glass-bg: rgba(31, 45, 61, 0.55);
+    --glass-border: rgba(255, 255, 255, 0.12);
+    --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+    --text-primary: #e8f0f7;
+    --text-muted: #9fb0c2;
+  }
+}
+
+:root[data-theme='dark'] {
+  --bg-gradient: linear-gradient(160deg, #1a2634 0%, #1f3144 100%);
+  --glass-bg: rgba(31, 45, 61, 0.55);
+  --glass-border: rgba(255, 255, 255, 0.12);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+  --text-primary: #e8f0f7;
+  --text-muted: #9fb0c2;
+}
