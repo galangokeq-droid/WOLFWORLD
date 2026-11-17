@@ -8,8 +8,8 @@
   --color-slate: #1f2d3d;
 
   /* Permukaan kaca */
-  --glass-bg: rgba(255, 255, 255, 0.55);
-  --glass-border: rgba(255, 255, 255, 0.85);
+  --glass-bg: rgba(255, 255, 255, 0.6);
+  --glass-border: rgba(255, 255, 255, 0.9);
   --glass-shadow: 0 8px 32px rgba(31, 45, 61, 0.08);
   --glass-blur: blur(18px);
 
@@ -43,17 +43,6 @@
   --sidebar-width: 248px;
   --topbar-height: 64px;
   --bottom-nav-height: 64px;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme='light']) {
-    --bg-gradient: linear-gradient(160deg, #1a2634 0%, #1f3144 100%);
-    --glass-bg: rgba(31, 45, 61, 0.55);
-    --glass-border: rgba(255, 255, 255, 0.12);
-    --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
-    --text-primary: #e8f0f7;
-    --text-muted: #9fb0c2;
-  }
 }
 
 :root[data-theme='dark'] {
