@@ -14,9 +14,15 @@ const errorBox = document.getElementById('login-error');
 const passwordToggle = document.getElementById('password-toggle');
 const forgotButton = document.getElementById('forgot-password');
 
-function showError(message) {
+function showMessage(message, type) {
   errorBox.textContent = message;
+  errorBox.classList.toggle('alert-error', type === 'error');
+  errorBox.classList.toggle('alert-success', type === 'success');
   errorBox.hidden = false;
+}
+
+function showError(message) {
+  showMessage(message, 'error');
 }
 
 function clearError() {
