@@ -5,26 +5,14 @@ const AUTH_MESSAGES = {
 };
 
 const DEFAULT_MESSAGE = 'Terjadi kesalahan. Silakan coba lagi.';
+const NETWORK_MESSAGE = 'Koneksi bermasalah. Periksa jaringan Anda.';
 
-/**
- * Mengubah error teknis menjadi pesan Bahasa Indonesia yang aman ditampilkan.
- * SEMENTARA: pesan asli ditampilkan untuk debugging. Kembalikan ke versi aman setelah masalah selesai.
- */
 export function toUserMessage(error) {
-  if (!error) return DEFAULT_MESSAGE;
-
   console.error('[WOLFWORLD]', error);
 
-  if (typeof error.message === 'string') {
-    for (const [key, message] of Object.entries(AUTH_MESSAGES)) {
-      if (error.message.includes(key)) return message;
-    }
-  }
+  const raw = typeof error?.message === 'string' ? error.message : '';
+  if (AUTH_MESSAGES[raw]) return AUTH_MESSAGES[raw];
+  if (/network|failed to fetch/i.test(raw)) return NETWORK_MESSAGE;
 
-  if (error.status === 0 || error.message === 'Failed to fetch') {
-    return 'Koneksi bermasalah. Periksa jaringan Anda.';
-  }
-
-  const detail = typeof error.message === 'string' ? error.message : '';
-  return `${DEFAULT_MESSAGE} (${detail})`;
+  return DEFAULT_MESSAGE;
 }
