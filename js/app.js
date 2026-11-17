@@ -1,9 +1,12 @@
 import { signInWithPassword, signOut, getCurrentSession } from './auth/authentication.js';
 import { fetchCurrentProfile } from './services/profile.service.js';
-import { resolveAccess } from './auth/authorization.js';
+import { resolveAccess, APP_ROLES } from './auth/authorization.js';
 import { isValidEmail, isNonEmpty } from './utils/validators.js';
 import { toUserMessage } from './utils/error-handler.js';
+import { loadDashboard } from './pages/dashboard.js';
 
+const loginView = document.getElementById('login-view');
+const dashboardView = document.getElementById('dashboard-view');
 const form = document.getElementById('login-form');
 const emailInput = document.getElementById('email');
 const passwordInput = document.getElementById('password');
@@ -13,6 +16,14 @@ const submitButton = document.getElementById('submit-button');
 const errorBox = document.getElementById('login-error');
 const passwordToggle = document.getElementById('password-toggle');
 const forgotButton = document.getElementById('forgot-password');
+const userName = document.getElementById('user-name');
+const logoutButton = document.getElementById('logout-button');
+
+const ACCESS_MESSAGES = {
+  PROFILE_MISSING: 'Profil akun belum terdaftar. Hubungi Owner.',
+  ACCOUNT_INACTIVE: 'Akun Anda nonaktif. Hubungi Owner.',
+  UNKNOWN_ROLE: 'Role akun tidak dikenali. Hubungi Owner.',
+};
 
 function showMessage(message, type) {
   errorBox.textContent = message;
@@ -56,9 +67,21 @@ function setLoading(isLoading) {
   submitButton.textContent = isLoading ? 'Memeriksa...' : 'Masuk';
 }
 
+function showLogin() {
+  dashboardView.hidden = true;
+  loginView.hidden = false;
+}
+
+function showDashboard(profile) {
+  loginView.hidden = true;
+  dashboardView.hidden = false;
+  userName.textContent = profile.fullName ?? 'Owner';
+  loadDashboard();
+}
+
 /**
- * Setelah login: ambil profil, cek status akun, lalu tentukan panel.
- * Jika profil atau role tidak bisa diverifikasi, sesi ditutup dan error ditampilkan.
+ * Setelah login: ambil profil, cek status akun dan role.
+ * Hanya Owner yang masuk ke dashboard saat ini. Panel Admin dibuat di tahap berikutnya.
  */
 async function completeSignIn() {
   const profile = await fetchCurrentProfile();
@@ -66,17 +89,20 @@ async function completeSignIn() {
 
   if (!access.allowed) {
     await signOut();
-    const messages = {
-      PROFILE_MISSING: 'Profil akun belum terdaftar. Hubungi Owner.',
-      ACCOUNT_INACTIVE: 'Akun Anda nonaktif. Hubungi Owner.',
-      UNKNOWN_ROLE: 'Role akun tidak dikenali. Hubungi Owner.',
-    };
-    showError(messages[access.reason]);
+    showLogin();
+    showError(ACCESS_MESSAGES[access.reason]);
     return;
   }
 
-  // Panel Owner dan Admin dibuat di tahap berikutnya (Stage 5 dan 6).
-  showMessage(`Login berhasil sebagai ${access.role}. Panel belum tersedia pada tahap ini.`, 'success');
+  if (access.role !== APP_ROLES.OWNER) {
+    await signOut();
+    showLogin();
+    showError('Panel Admin belum tersedia pada tahap ini.');
+    return;
+  }
+
+  clearError();
+  showDashboard(profile);
 }
 
 form.addEventListener('submit', async (event) => {
@@ -93,6 +119,17 @@ form.addEventListener('submit', async (event) => {
     showError(toUserMessage(error));
   } finally {
     setLoading(false);
+  }
+});
+
+logoutButton.addEventListener('click', async () => {
+  try {
+    await signOut();
+    passwordInput.value = '';
+    clearError();
+    showLogin();
+  } catch (error) {
+    showError(toUserMessage(error));
   }
 });
 
