@@ -19,6 +19,18 @@
 
 WOLFWORLD Control Center adalah panel internal untuk Owner dan Admin. Hak akses ditentukan di database lewat Row Level Security (RLS), jadi browser tidak pernah dipercaya untuk menentukan role sendiri.
 
+## Visi
+
+Menjadi platform bisnis digital yang rapi, transparan, dan mudah dikelola, sehingga setiap pesanan, pembayaran, dan proyek bisa dipantau dari satu tempat.
+
+## Misi
+
+1. Menyediakan satu panel kendali untuk seluruh operasional WOLFWORLD.
+2. Menjaga keamanan data dengan hak akses yang jelas untuk setiap peran.
+3. Mencatat setiap aktivitas penting agar keputusan bisnis selalu bisa ditelusuri.
+4. Menyajikan laporan keuangan yang akurat dan mudah dipahami.
+5. Membuat pengelolaan layanan dan pelanggan lebih cepat, dari HP maupun desktop.
+
 ## Fitur
 
 | Modul | Status |
