@@ -6,15 +6,16 @@
     <title>WOLFWORLD Control Center</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="css/variables.css" />
     <link rel="stylesheet" href="css/reset.css" />
     <link rel="stylesheet" href="css/components.css" />
     <link rel="stylesheet" href="css/pages.css" />
+    <link rel="stylesheet" href="css/layout.css" />
     <link rel="stylesheet" href="css/responsive.css" />
   </head>
   <body>
-    <main id="app" class="login-page">
+    <main id="login-view" class="login-page">
       <section class="glass login-card" aria-labelledby="login-title">
         <header class="login-brand">
           <h1 id="login-title">WOLFWORLD</h1>
@@ -51,6 +52,69 @@
         </form>
       </section>
     </main>
+
+    <div id="dashboard-view" class="app-shell" hidden>
+      <aside class="sidebar glass">
+        <div class="sidebar-brand">
+          <strong>WOLFWORLD</strong>
+          <span>Owner Panel</span>
+        </div>
+
+        <nav class="sidebar-nav" aria-label="Menu utama">
+          <p class="nav-group">Overview</p>
+          <button type="button" class="nav-item is-active" aria-current="page">Dashboard</button>
+
+          <p class="nav-group">Bisnis</p>
+          <button type="button" class="nav-item" disabled>Customer Management <span class="nav-soon">Segera</span></button>
+          <button type="button" class="nav-item" disabled>Orders Management <span class="nav-soon">Segera</span></button>
+          <button type="button" class="nav-item" disabled>Products Management <span class="nav-soon">Segera</span></button>
+          <button type="button" class="nav-item" disabled>Services Management <span class="nav-soon">Segera</span></button>
+          <button type="button" class="nav-item" disabled>Projects Management <span class="nav-soon">Segera</span></button>
+          <button type="button" class="nav-item" disabled>Payments Management <span class="nav-soon">Segera</span></button>
+
+          <p class="nav-group">Keuangan</p>
+          <button type="button" class="nav-item" disabled>Financial Reports <span class="nav-soon">Segera</span></button>
+
+          <p class="nav-group">Sistem</p>
+          <button type="button" class="nav-item" disabled>Admin Management <span class="nav-soon">Segera</span></button>
+          <button type="button" class="nav-item" disabled>Activity Logs <span class="nav-soon">Segera</span></button>
+          <button type="button" class="nav-item" disabled>System Settings <span class="nav-soon">Segera</span></button>
+        </nav>
+
+        <div class="sidebar-footer">
+          <p id="user-name" class="user-name"></p>
+          <button type="button" class="btn btn-secondary" id="logout-button">Keluar</button>
+        </div>
+      </aside>
+
+      <div class="main-area">
+        <header class="topbar glass">
+          <h2>Dashboard</h2>
+          <span class="topbar-note">Ringkasan seluruh aktivitas bisnis</span>
+        </header>
+
+        <section class="content">
+          <div id="dashboard-error" class="alert alert-error" role="alert" hidden></div>
+
+          <div id="stats-grid" class="stats-grid"></div>
+
+          <div class="panels-grid">
+            <section class="glass panel">
+              <h3>Pesanan Terbaru</h3>
+              <ul id="recent-orders" class="list"></ul>
+            </section>
+            <section class="glass panel">
+              <h3>Pembayaran Terbaru</h3>
+              <ul id="recent-payments" class="list"></ul>
+            </section>
+            <section class="glass panel">
+              <h3>Aktivitas Terbaru</h3>
+              <ul id="recent-activities" class="list"></ul>
+            </section>
+          </div>
+        </section>
+      </div>
+    </div>
 
     <script type="module" src="js/app.js"></script>
   </body>
