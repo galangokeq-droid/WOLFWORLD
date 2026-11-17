@@ -4,9 +4,19 @@ import { resolveAccess, APP_ROLES } from './auth/authorization.js';
 import { isValidEmail, isNonEmpty } from './utils/validators.js';
 import { toUserMessage } from './utils/error-handler.js';
 import { loadDashboard } from './pages/dashboard.js';
+import { renderOrdersList } from './pages/orders.js';
+import { renderPaymentsList } from './pages/payments.js';
 
 const loginView = document.getElementById('login-view');
 const dashboardView = document.getElementById('dashboard-view');
+const dashboardContent = document.getElementById('dashboard-content');
+const moduleContent = document.getElementById('module-content');
+const pageTitle = document.getElementById('page-title');
+const menuButton = document.getElementById('menu-button');
+const drawer = document.getElementById('drawer');
+const drawerOverlay = document.getElementById('drawer-overlay');
+const navButtons = document.querySelectorAll('[data-page]');
+
 const form = document.getElementById('login-form');
 const emailInput = document.getElementById('email');
 const passwordInput = document.getElementById('password');
@@ -23,6 +33,12 @@ const ACCESS_MESSAGES = {
   PROFILE_MISSING: 'Profil akun belum terdaftar. Hubungi Owner.',
   ACCOUNT_INACTIVE: 'Akun Anda nonaktif. Hubungi Owner.',
   UNKNOWN_ROLE: 'Role akun tidak dikenali. Hubungi Owner.',
+};
+
+const PAGE_TITLES = {
+  dashboard: 'Dashboard',
+  orders: 'Pesanan',
+  payments: 'Pembayaran',
 };
 
 function showMessage(message, type) {
@@ -64,10 +80,54 @@ function validateForm() {
 
 function setLoading(isLoading) {
   submitButton.disabled = isLoading;
-  submitButton.textContent = isLoading ? 'Memeriksa...' : 'Masuk';
+  submitButton.textContent = isLoading ? 'Memeriksa...' : 'Login';
+}
+
+function openDrawer() {
+  drawer.classList.add('is-open');
+  drawer.setAttribute('aria-hidden', 'false');
+  drawerOverlay.hidden = false;
+  menuButton.setAttribute('aria-expanded', 'true');
+}
+
+function closeDrawer() {
+  drawer.classList.remove('is-open');
+  drawer.setAttribute('aria-hidden', 'true');
+  drawerOverlay.hidden = true;
+  menuButton.setAttribute('aria-expanded', 'false');
+}
+
+/** Pindah halaman di dalam dashboard. Hanya satu modul yang tampil dalam satu waktu. */
+function navigate(page) {
+  const isDashboard = page === 'dashboard';
+  dashboardContent.hidden = !isDashboard;
+  moduleContent.hidden = isDashboard;
+  pageTitle.textContent = PAGE_TITLES[page] ?? PAGE_TITLES.dashboard;
+
+  for (const button of navButtons) {
+    const active = button.dataset.page === page;
+    button.classList.toggle('is-active', active);
+    if (active) {
+      button.setAttribute('aria-current', 'page');
+    } else {
+      button.removeAttribute('aria-current');
+    }
+  }
+
+  closeDrawer();
+  window.scrollTo(0, 0);
+
+  if (isDashboard) {
+    loadDashboard();
+  } else if (page === 'orders') {
+    renderOrdersList(moduleContent);
+  } else if (page === 'payments') {
+    renderPaymentsList(moduleContent);
+  }
 }
 
 function showLogin() {
+  closeDrawer();
   dashboardView.hidden = true;
   loginView.hidden = false;
 }
@@ -76,7 +136,7 @@ function showDashboard(profile) {
   loginView.hidden = true;
   dashboardView.hidden = false;
   userName.textContent = profile.fullName ?? 'Owner';
-  loadDashboard();
+  navigate('dashboard');
 }
 
 /**
@@ -132,6 +192,24 @@ logoutButton.addEventListener('click', async () => {
     showError(toUserMessage(error));
   }
 });
+
+menuButton.addEventListener('click', () => {
+  if (drawer.classList.contains('is-open')) {
+    closeDrawer();
+  } else {
+    openDrawer();
+  }
+});
+
+drawerOverlay.addEventListener('click', closeDrawer);
+
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape') closeDrawer();
+});
+
+for (const button of navButtons) {
+  button.addEventListener('click', () => navigate(button.dataset.page));
+}
 
 passwordToggle.addEventListener('click', () => {
   const isHidden = passwordInput.type === 'password';
