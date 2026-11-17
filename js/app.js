@@ -76,7 +76,7 @@ async function completeSignIn() {
   }
 
   // Panel Owner dan Admin dibuat di tahap berikutnya (Stage 5 dan 6).
-  showError(`Login berhasil sebagai ${access.role}. Panel belum tersedia pada tahap ini.`);
+  showMessage(`Login berhasil sebagai ${access.role}. Panel belum tersedia pada tahap ini.`, 'success');
 }
 
 form.addEventListener('submit', async (event) => {
