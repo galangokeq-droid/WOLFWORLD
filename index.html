@@ -176,7 +176,13 @@
       </nav>
     </div>
 
-    <script type="module" src="js/app.js"></script>
+       <script type="module">
+      import('./js/app.js').catch((error) => {
+        const box = document.getElementById('login-error');
+        box.textContent = 'Gagal memuat aplikasi: ' + error.message;
+        box.hidden = false;
+      });
+    </script>
     <script type="module" src="js/notifications.js"></script>
   </body>
 </html>
