@@ -1,5 +1,101 @@
+@media (max-width: 1024px) {
+  .app-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    position: static;
+    height: auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .app-shell {
+    padding: var(--space-3);
+    gap: var(--space-3);
+  }
+
+  .sidebar {
+    padding: var(--space-4);
+  }
+
+  .sidebar-nav {
+    flex-direction: row;
+    overflow-x: auto;
+    gap: var(--space-2);
+    padding-bottom: var(--space-2);
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .nav-group {
+    display: none;
+  }
+
+  .nav-item {
+    flex: 0 0 auto;
+    width: auto;
+    white-space: nowrap;
+    min-height: 40px;
+  }
+
+  .nav-soon {
+    display: none;
+  }
+
+  .sidebar-footer {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 0;
+  }
+
+  .user-name {
+    flex: 1;
+  }
+
+  .topbar {
+    padding: var(--space-3) var(--space-4);
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-1);
+  }
+
+  .topbar h2 {
+    font-size: 1.125rem;
+  }
+
+  .content {
+    gap: var(--space-4);
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-3);
+  }
+
+  .stat-card {
+    padding: var(--space-4);
+  }
+
+  .stat-value {
+    font-size: 1.25rem;
+  }
+
+  .panels-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .panel {
+    padding: var(--space-4);
+  }
+}
+
 @media (max-width: 480px) {
   .login-card {
     padding: var(--space-6);
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
   }
 }
