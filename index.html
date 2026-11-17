@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>WOLFWORLD Control Center</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="css/variables.css" />
+    <link rel="stylesheet" href="css/reset.css" />
+    <link rel="stylesheet" href="css/components.css" />
+    <link rel="stylesheet" href="css/pages.css" />
+    <link rel="stylesheet" href="css/responsive.css" />
+  </head>
+  <body>
+    <main id="app" class="login-page">
+      <section class="glass login-card" aria-labelledby="login-title">
+        <header class="login-brand">
+          <h1 id="login-title">WOLFWORLD</h1>
+          <p>Owner &amp; Admin Control Center</p>
+        </header>
+
+        <div id="login-error" class="alert alert-error" role="alert" hidden></div>
+
+        <form id="login-form" class="login-form" novalidate>
+          <div class="field">
+            <label class="field-label" for="email">Email</label>
+            <input class="field-input" id="email" name="email" type="email" autocomplete="username" required />
+            <span class="field-error" id="email-error" hidden></span>
+          </div>
+
+          <div class="field">
+            <label class="field-label" for="password">Password</label>
+            <div class="password-field">
+              <input class="field-input" id="password" name="password" type="password" autocomplete="current-password" required />
+              <button type="button" class="password-toggle" id="password-toggle" aria-controls="password" aria-pressed="false">Tampilkan</button>
+            </div>
+            <span class="field-error" id="password-error" hidden></span>
+          </div>
+
+          <div class="login-options">
+            <label>
+              <input type="checkbox" id="remember" name="remember" checked />
+              Ingat sesi saya
+            </label>
+            <button type="button" class="link-button" id="forgot-password">Lupa password?</button>
+          </div>
+
+          <button type="submit" class="btn btn-primary" id="submit-button">Masuk</button>
+        </form>
+      </section>
+    </main>
+
+    <script type="module" src="js/app.js"></script>
+  </body>
+</html>
